@@ -1,0 +1,9 @@
+<package project="Mer:Trunk:Base" name="dbus">
+  <title>D-BUS message bus</title>
+  <description>D-BUS is a system for sending messages between applications. It is
+used both for the systemwide message bus service, and as a
+per-user-login-session messaging facility.
+
+</description>
+  <url>http://www.freedesktop.org/software/dbus/</url>
+</package>

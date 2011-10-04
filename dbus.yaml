@@ -1,0 +1,125 @@
+Name: dbus
+Summary: D-Bus message bus
+Version: 1.4.14
+Release: 1
+Group: System/Libraries
+License: GPLv2+ or AFL
+URL: http://www.freedesktop.org/software/dbus/
+Sources:
+    - "http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz"
+Patches:
+    - start-early.patch
+Description: |
+    D-Bus is a system for sending messages between applications. It is used both
+    for the systemwide message bus service, and as a per-user-login-session
+    messaging facility.
+Requires:
+    - "%{name}-libs = %{version}"
+RequiresPre:
+    - /usr/sbin/useradd
+PkgBR:
+    - expat-devel >= 1.95.5
+    - gettext
+    - libcap-devel
+    - libtool
+PkgConfigBR:
+    - x11
+Configure: reconfigure
+ConfigOptions:
+    - --exec-prefix=/
+    - --bindir=/bin
+    - --libexecdir=/%{_lib}/dbus-1
+    - --sysconfdir=/etc
+    - --libdir=/%{_lib}
+    - --disable-tests
+    - --disable-asserts
+    - --disable-xml-docs
+    # On ARM the doxygen is installed during build so we need to disable the build manually.
+    - --disable-doxygen-docs
+    - --disable-selinux
+    - --disable-libaudit
+    - --with-system-pid-file=%{_localstatedir}/run/messagebus.pid
+    - --with-dbus-user=dbus
+    - --with-systemdsystemunitdir="/%{_lib}/systemd/system"
+Builder: make
+Files:
+    - "%doc COPYING"
+    - "/bin/dbus-cleanup-sockets"
+    - "/bin/dbus-daemon"
+    - "/bin/dbus-monitor"
+    - "/bin/dbus-send"
+    - "/bin/dbus-uuidgen"
+    - "%dir %{_sysconfdir}/dbus-1"
+    - "%config(noreplace) %{_sysconfdir}/dbus-1/session.conf"
+    - "%dir %{_sysconfdir}/dbus-1/session.d"
+    - "%config(noreplace) %{_sysconfdir}/dbus-1/system.conf"
+    - "%dir %{_sysconfdir}/dbus-1/system.d"
+    - "%dir /%{_lib}/dbus-1"
+    - "/%{_lib}/systemd/system/*"
+# See doc/system-activation.txt in source tarball for the rationale behind
+# these permissions
+    - "%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper"
+    - "%dir %{_datadir}/dbus-1"
+    - "%{_datadir}/dbus-1/interfaces"
+    - "%{_datadir}/dbus-1/services"
+    - "%{_datadir}/dbus-1/system-services"
+    - "%doc %{_mandir}/man1/dbus-cleanup-sockets.1.gz"
+    - "%doc %{_mandir}/man1/dbus-daemon.1.gz"
+    - "%doc %{_mandir}/man1/dbus-monitor.1.gz"
+    - "%doc %{_mandir}/man1/dbus-send.1.gz"
+    - "%doc %{_mandir}/man1/dbus-uuidgen.1.gz"
+    - "%dir %{_localstatedir}/run/dbus"
+    - "%dir %{_localstatedir}/lib/dbus"
+SubPackages:
+    - Name: libs
+      Summary: Libraries for accessing D-Bus
+      Group: System/Libraries
+      Description: Lowlevel libraries for accessing D-Bus.
+      Files:
+          - "/%{_lib}/libdbus-1.so.3*"
+
+    - Name: doc
+      Summary: Developer documentation for D-Bus
+      Group: Documentation
+      Description: |
+          This package contains DevHelp developer documentation for D-Bus along with
+          other supporting documentation such as the introspect dtd file.
+      Files:
+          #- "%doc doc/api/html"
+          - "%doc doc/dbus-faq.html"
+          - "%doc doc/dbus-specification.html"
+          - "%doc doc/dbus-test-plan.html"
+          - "%doc doc/dbus-tutorial.html"
+          - "%doc doc/introspect.dtd"
+          - "%doc doc/introspect.xsl"
+          - "%doc doc/system-activation.txt"
+          - "%doc %{_datadir}/doc/dbus/dbus-faq.html"
+          - "%doc %{_datadir}/doc/dbus/dbus-specification.html"
+          - "%doc %{_datadir}/doc/dbus/dbus-test-plan.html"
+          - "%doc %{_datadir}/doc/dbus/dbus-tutorial.html"
+          - "%doc %{_datadir}/doc/dbus/diagram.png"
+          - "%doc %{_datadir}/doc/dbus/diagram.svg"
+          - "%doc %{_datadir}/doc/dbus/system-activation.txt"
+
+    - Name: devel
+      Summary: Libraries and headers for D-Bus
+      Group: Development/Libraries
+      Description: Headers and static libraries for D-Bus.
+      Files:
+          - "/%{_lib}/libdbus-1.so"
+          - "%{_includedir}/dbus-1.0/dbus/dbus*.h"
+          - "%dir %{_libdir}/dbus-1.0"
+          - "%{_libdir}/dbus-1.0/include/dbus/dbus-arch-deps.h"
+          - "%{_libdir}/pkgconfig/dbus-1.pc"
+      Requires:
+          - pkgconfig
+
+    - Name: x11
+      Summary: X11-requiring add-ons for D-Bus
+      Group: System/X11
+      Description: |
+          D-Bus contains some tools that require Xlib to be installed, those are in this
+          separate package so server systems need not install X.
+      Files:
+          - "%{_bindir}/dbus-launch"
+          - "%doc %{_mandir}/man1/dbus-launch.1.gz"
