@@ -1,3 +1,6 @@
+* Mon Apr 30 2012 Marko Saukko <sage@merproject.org> - 1.4.20
+- Fixes MER#298: upgrade dbus to recent version 1.4.20
+
 * Fri Jan 27 2012 Marko Saukko <marko.saukko@cybercom.com> - 1.4.16
 - Updated to version 1.4.16
 

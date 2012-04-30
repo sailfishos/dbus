@@ -8,7 +8,7 @@
 
 Name:       dbus
 Summary:    D-Bus message bus
-Version:    1.4.16
+Version:    1.4.20
 Release:    1
 Group:      System/Libraries
 License:    GPLv2+ or AFL
