@@ -1,6 +1,6 @@
 Name: dbus
 Summary: D-Bus message bus
-Version: 1.4.20
+Version: 1.6.4
 Release: 1
 Group: System/Libraries
 License: GPLv2+ or AFL
@@ -22,6 +22,7 @@ PkgBR:
     - gettext
     - libcap-devel
     - libtool
+    - systemd-devel
 PkgConfigBR:
     - x11
 Configure: reconfigure
@@ -30,7 +31,6 @@ ConfigOptions:
     - --bindir=/bin
     - --libexecdir=/%{_lib}/dbus-1
     - --sysconfdir=/etc
-    - --libdir=/%{_lib}
     - --disable-tests
     - --disable-asserts
     - --disable-xml-docs
@@ -41,6 +41,7 @@ ConfigOptions:
     - --with-system-pid-file=%{_localstatedir}/run/messagebus.pid
     - --with-dbus-user=dbus
     - --with-systemdsystemunitdir="/%{_lib}/systemd/system"
+    - --enable-systemd
 Builder: make
 Files:
     - "%doc COPYING"
@@ -55,7 +56,11 @@ Files:
     - "%config(noreplace) %{_sysconfdir}/dbus-1/system.conf"
     - "%dir %{_sysconfdir}/dbus-1/system.d"
     - "%dir /%{_lib}/dbus-1"
-    - "/%{_lib}/systemd/system/*"
+    - /lib/systemd/system/dbus.service
+    - /lib/systemd/system/dbus.socket
+    - /lib/systemd/system/dbus.target.wants/dbus.socket
+    - /lib/systemd/system/multi-user.target.wants/dbus.service
+    - /lib/systemd/system/sockets.target.wants/dbus.socket
 # See doc/system-activation.txt in source tarball for the rationale behind
 # these permissions
     - "%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper"
@@ -68,7 +73,7 @@ Files:
     - "%doc %{_mandir}/man1/dbus-monitor.1.gz"
     - "%doc %{_mandir}/man1/dbus-send.1.gz"
     - "%doc %{_mandir}/man1/dbus-uuidgen.1.gz"
-    - "%dir %{_localstatedir}/run/dbus"
+    - "%ghost %dir %{_localstatedir}/run/dbus"
     - "%dir %{_localstatedir}/lib/dbus"
 SubPackages:
     - Name: libs
@@ -76,7 +81,7 @@ SubPackages:
       Group: System/Libraries
       Description: Lowlevel libraries for accessing D-Bus.
       Files:
-          - "/%{_lib}/libdbus-1.so.3*"
+          - "/%{_libdir}/libdbus-1.so.3*"
 
     - Name: doc
       Summary: Developer documentation for D-Bus
@@ -85,7 +90,6 @@ SubPackages:
           This package contains DevHelp developer documentation for D-Bus along with
           other supporting documentation such as the introspect dtd file.
       Files:
-          #- "%doc doc/api/html"
           - "%doc doc/dbus-faq.html"
           - "%doc doc/dbus-specification.html"
           - "%doc doc/dbus-test-plan.html"
@@ -106,7 +110,7 @@ SubPackages:
       Group: Development/Libraries
       Description: Headers and static libraries for D-Bus.
       Files:
-          - "/%{_lib}/libdbus-1.so"
+          - "/%{_libdir}/libdbus-1.so"
           - "%{_includedir}/dbus-1.0/dbus/dbus*.h"
           - "%dir %{_libdir}/dbus-1.0"
           - "%{_libdir}/dbus-1.0/include/dbus/dbus-arch-deps.h"

@@ -1,3 +1,8 @@
+* Tue Jul 24 2012 Marko Saukko <marko.saukko@jollamobile.com> - 1.6.4
+- Update to dbus 1.6.4
+- Enable systemd support
+- Added %ghost to /var/run/dbus
+
 * Mon Apr 30 2012 Marko Saukko <sage@merproject.org> - 1.4.20
 - Fixes MER#298: upgrade dbus to recent version 1.4.20
 
