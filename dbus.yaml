@@ -7,8 +7,11 @@ License: GPLv2+ or AFL
 URL: http://www.freedesktop.org/software/dbus/
 Sources:
     - "http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz"
+    - dbus-user.socket
+    - dbus-user.service
 Patches:
     - start-early.patch
+    - dbus-sba-systemd-user-sessions.patch
 Description: |
     D-Bus is a system for sending messages between applications. It is used both
     for the systemwide message bus service, and as a per-user-login-session
@@ -56,6 +59,7 @@ Files:
     - "%config(noreplace) %{_sysconfdir}/dbus-1/system.conf"
     - "%dir %{_sysconfdir}/dbus-1/system.d"
     - "%dir /%{_lib}/dbus-1"
+    - "%{_libdir}/systemd/user/*"
     - /lib/systemd/system/dbus.service
     - /lib/systemd/system/dbus.socket
     - /lib/systemd/system/dbus.target.wants/dbus.socket

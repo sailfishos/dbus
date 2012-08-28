@@ -16,8 +16,11 @@ Group:      System/Libraries
 License:    GPLv2+ or AFL
 URL:        http://www.freedesktop.org/software/dbus/
 Source0:    http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
+Source1:    dbus-user.socket
+Source2:    dbus-user.service
 Source100:  dbus.yaml
 Patch0:     start-early.patch
+Patch1:     dbus-sba-systemd-user-sessions.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -82,6 +85,8 @@ separate package so server systems need not install X.
 
 # start-early.patch
 %patch0 -p1
+# dbus-sba-systemd-user-sessions.patch
+%patch1 -p1
 # >> setup
 # << setup
 
@@ -121,6 +126,11 @@ mkdir -p %{buildroot}%{_bindir}
 mv -f %{buildroot}/bin/dbus-launch %{buildroot}%{_bindir}
 
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
+
+mkdir -p %{buildroot}%{_libdir}/systemd/user
+install -m0644 %{SOURCE1} %{buildroot}%{_libdir}/systemd/user/dbus.socket
+install -m0644 %{SOURCE2} %{buildroot}%{_libdir}/systemd/user/dbus.service
+
 # << install post
 
 
@@ -162,6 +172,7 @@ systemctl daemon-reload
 %config(noreplace) %{_sysconfdir}/dbus-1/system.conf
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir /%{_lib}/dbus-1
+%{_libdir}/systemd/user/*
 /lib/systemd/system/dbus.service
 /lib/systemd/system/dbus.socket
 /lib/systemd/system/dbus.target.wants/dbus.socket
