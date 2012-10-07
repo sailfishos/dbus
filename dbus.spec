@@ -10,7 +10,7 @@ Name:       dbus
 # << macros
 
 Summary:    D-Bus message bus
-Version:    1.6.4
+Version:    1.6.8
 Release:    1
 Group:      System/Libraries
 License:    GPLv2+ or AFL
@@ -43,7 +43,6 @@ messaging facility.
 %package libs
 Summary:    Libraries for accessing D-Bus
 Group:      System/Libraries
-Requires:   %{name} = %{version}-%{release}
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -195,7 +194,7 @@ systemctl daemon-reload
 
 %files libs
 %defattr(-,root,root,-)
-/%{_libdir}/libdbus-1.so.3*
+%{_libdir}/libdbus-1.so.3*
 # >> files libs
 # << files libs
 
@@ -220,7 +219,7 @@ systemctl daemon-reload
 
 %files devel
 %defattr(-,root,root,-)
-/%{_libdir}/libdbus-1.so
+%{_libdir}/libdbus-1.so
 %{_includedir}/dbus-1.0/dbus/dbus*.h
 %dir %{_libdir}/dbus-1.0
 %{_libdir}/dbus-1.0/include/dbus/dbus-arch-deps.h
