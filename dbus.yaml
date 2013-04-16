@@ -12,6 +12,7 @@ Sources:
 Patches:
     - start-early.patch
     - dbus-sba-systemd-user-sessions.patch
+    - ensure-machine-id-in-start.patch
 Description: |
     D-Bus is a system for sending messages between applications. It is used both
     for the systemwide message bus service, and as a per-user-login-session

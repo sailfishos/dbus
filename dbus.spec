@@ -21,6 +21,7 @@ Source2:    dbus-user.service
 Source100:  dbus.yaml
 Patch0:     start-early.patch
 Patch1:     dbus-sba-systemd-user-sessions.patch
+Patch2:     ensure-machine-id-in-start.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -86,6 +87,8 @@ separate package so server systems need not install X.
 %patch0 -p1
 # dbus-sba-systemd-user-sessions.patch
 %patch1 -p1
+# ensure-machine-id-in-start.patch
+%patch2 -p1
 # >> setup
 # << setup
 

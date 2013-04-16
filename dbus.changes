@@ -1,3 +1,7 @@
+* Tue Apr 16 2013 Pekka Lundstrom <pekka.lundstrom>@jollamobile.com> - 1.6.8
+- Added new patch ensure-machine-id-in-start.patch
+  This creates machine-id if it does not exist before starting dbus
+
 * Sun Oct 07 2012 Marko Saukko <marko.saukko@jollamobile.com> - 1.6.8
 - Update to version 1.6.8, fixes CVE-2012-3524
 - Drop dbus dependency from dbus-libs
