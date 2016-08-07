@@ -1,0 +1,57 @@
+Based on commits:
+
+878a5f909286439364a14bb56f3ac942bb610365 Mon Sep 17 00:00:00 2001
+Carsten Munk <carsten.munk@jollamobile.com>
+[PATCH] Apply ensure-machine-id-in-start.patch
+
+From af05714adaa77417741c375af76b8776a12adcac Mon Sep 17 00:00:00 2001
+Pekka Lundstrom <pekka.lundstrom@jollamobile.com>
+[PATCH] [init] dbus.service is started as early as possible in basic.target
+
+diff -purN upstream/bus/dbus.service.in dbus/bus/dbus.service.in
+--- upstream/bus/dbus.service.in	2016-06-18 00:16:02.000000000 +0300
++++ dbus/bus/dbus.service.in	2016-06-18 01:06:28.631211118 +0300
+@@ -2,8 +2,16 @@
+ Description=D-Bus System Message Bus
+ Documentation=man:dbus-daemon(1)
+ Requires=dbus.socket
++DefaultDependencies=no
++After=local-fs.target dbus.socket
++Before=basic.target
++Conflicts=shutdown.target
+ 
+ [Service]
++ExecStartPre=@EXPANDED_BINDIR@/dbus-uuidgen --ensure
+ ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+ ExecReload=@EXPANDED_BINDIR@/dbus-send --print-reply --system --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+ OOMScoreAdjust=-900
++
++[Install]
++WantedBy=basic.target
+diff -purN upstream/bus/dbus.socket.in dbus/bus/dbus.socket.in
+--- upstream/bus/dbus.socket.in	2016-06-18 00:15:27.000000000 +0300
++++ dbus/bus/dbus.socket.in	2016-06-18 00:09:45.000000000 +0300
+@@ -1,5 +1,9 @@
+ [Unit]
+ Description=D-Bus System Message Bus Socket
++DefaultDependencies=no
++After=local-fs.target
++Before=shutdown.target
++Conflicts=shutdown.target
+ 
+ [Socket]
+ ListenStream=@DBUS_SYSTEM_SOCKET@
+diff -purN upstream/bus/Makefile.am dbus/bus/Makefile.am
+--- upstream/bus/Makefile.am	2016-06-18 00:16:02.000000000 +0300
++++ dbus/bus/Makefile.am	2016-06-18 00:24:37.929747521 +0300
+@@ -254,8 +254,8 @@ if HAVE_SYSTEMD
+ # Unconditionally enable D-Bus on systemd installations
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants
+ 	ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
+-	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants
+-	ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
++	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/basic.target.wants
++	ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/basic.target.wants/dbus.service
+ endif
+ if DBUS_ENABLE_USER_SESSION
+ 	$(mkinstalldirs) $(DESTDIR)$(systemduserunitdir)/sockets.target.wants

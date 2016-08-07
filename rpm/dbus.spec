@@ -6,7 +6,7 @@ Name:       dbus
 %define dbus_user_uid 81
 
 Summary:    D-Bus message bus
-Version:    1.6.30
+Version:    1.10.8
 Release:    1
 Group:      System/Libraries
 License:    GPLv2+ or AFL
@@ -14,7 +14,11 @@ URL:        http://www.freedesktop.org/software/dbus/
 Source0:    http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1:    dbus-user.socket
 Source2:    dbus-user.service
-Patch0:     dbus-1.9.0-enable-build-support-without-systemd-compatibility-l.patch
+Patch1:     0001-Start-dbus-as-early-as-possible.patch
+# FIXME: Probably we should get rid of this patch and make proper setgid
+# helper or so. Rumours say that this patch was about lipstick start and
+# boosters orientation.
+Patch2:     0002-patch-Disable-setuid-checking-due-to-it-conflicting-.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -36,7 +40,6 @@ Provides:       %{name}-x11
 D-Bus is a system for sending messages between applications. It is used both
 for the systemwide message bus service, and as a per-user-login-session
 messaging facility.
-
 
 %package libs
 Summary:    Libraries for accessing D-Bus
@@ -66,10 +69,10 @@ Requires:   pkgconfig
 %description devel
 Headers and static libraries for D-Bus.
 
-
 %prep
 %setup -q -n %{name}-%{version}/dbus
-%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 
@@ -107,6 +110,10 @@ mkdir -p %{buildroot}%{_libdir}/systemd/user
 install -m0644 %{SOURCE1} %{buildroot}%{_libdir}/systemd/user/dbus.socket
 install -m0644 %{SOURCE2} %{buildroot}%{_libdir}/systemd/user/dbus.service
 
+# Deprecated. Use %{_datadir}/dbus-1/ instead.
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/session.d
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
+
 %pre
 # Add the "dbus" user and group
 [ -e /usr/sbin/groupadd ] && /usr/sbin/groupadd -r -g %{dbus_user_uid} dbus 2>/dev/null || :
@@ -138,13 +145,21 @@ systemctl daemon-reload || :
 /bin/dbus-daemon
 %{_bindir}/dbus-launch
 /bin/dbus-monitor
+/bin/dbus-run-session
 /bin/dbus-send
+/bin/dbus-test-tool
+/bin/dbus-update-activation-environment
 /bin/dbus-uuidgen
 %dir %{_sysconfdir}/dbus-1
 %config(noreplace) %{_sysconfdir}/dbus-1/session.conf
 %dir %{_sysconfdir}/dbus-1/session.d
 %config(noreplace) %{_sysconfdir}/dbus-1/system.conf
 %dir %{_sysconfdir}/dbus-1/system.d
+%dir %{_datadir}/dbus-1/session.d
+%dir %{_datadir}/dbus-1/system.d
+%dir %{_datadir}/dbus-1
+%config(noreplace) %{_datadir}/dbus-1/session.conf
+%config(noreplace) %{_datadir}/dbus-1/system.conf
 %dir /%{_lib}/dbus-1
 %{_libdir}/systemd/user/*
 /lib/systemd/system/dbus.service
@@ -157,12 +172,6 @@ systemctl daemon-reload || :
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
-%doc %{_mandir}/man1/dbus-cleanup-sockets.1.gz
-%doc %{_mandir}/man1/dbus-daemon.1.gz
-%doc %{_mandir}/man1/dbus-launch.1.gz
-%doc %{_mandir}/man1/dbus-monitor.1.gz
-%doc %{_mandir}/man1/dbus-send.1.gz
-%doc %{_mandir}/man1/dbus-uuidgen.1.gz
 %ghost %dir %{_localstatedir}/run/dbus
 %dir %{_localstatedir}/lib/dbus
 
@@ -178,6 +187,7 @@ systemctl daemon-reload || :
 %doc %{_datadir}/doc/dbus/diagram.png
 %doc %{_datadir}/doc/dbus/diagram.svg
 %doc %{_datadir}/doc/dbus/system-activation.txt
+%doc %{_datadir}/doc/dbus/examples/*
 
 %files devel
 %defattr(-,root,root,-)
