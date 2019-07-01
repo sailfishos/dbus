@@ -1,0 +1,61 @@
+From 6e4519febe9b09fd2a5afcb3431ce741ab58ea21 Mon Sep 17 00:00:00 2001
+From: Niels Breet <niels.breet@jolla.com>
+Date: Tue, 30 Jul 2019 15:34:33 +0300
+Subject: [PATCH] Enable building with systemd
+
+---
+ CMakeLists.txt      | 9 ++++++++-
+ dbus/CMakeLists.txt | 3 +++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 21c50d4..c3478cf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -476,6 +476,12 @@ endif()
+ 
+ set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon executable")
+ 
++# Enable systemd support unconditionally. --xfade
++
++set(HAVE_SYSTEMD 1)
++add_definitions(-DHAVE_SYSTEMD)
++add_definitions(-DENABLE_TRADITIONAL_ACTIVATION)
++
+ ########### create config.h ###############
+ 
+ #include(ConfigureChecks.cmake)
+@@ -611,6 +617,7 @@ if(WIN32)
+ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  ")
+ message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
+ else()
++message("        Building systemd support: ${HAVE_SYSTEMD}                     ")
+ message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
+ message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
+ message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
+@@ -672,7 +679,7 @@ add_custom_target(help-options
+ # create pkgconfig file
+ #
+ if(DBUS_ENABLE_PKGCONFIG)
+-    set(PLATFORM_LIBS pthread ${LIBRT})
++    set(PLATFORM_LIBS pthread systemd ${LIBRT})
+     include(FindPkgConfig QUIET)
+     if(PKG_CONFIG_FOUND)
+         # convert lists of link libraries into -lstdc++ -lm etc..
+diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
+index 51b2aec..d96154f 100644
+--- a/dbus/CMakeLists.txt
++++ b/dbus/CMakeLists.txt
+@@ -282,6 +282,9 @@ else(WIN32)
+     if(LIBSOCKET)
+         target_link_libraries(dbus-1 ${LIBSOCKET})
+     endif()
++    if(HAVE_SYSTEMD)
++        target_link_libraries(dbus-1 systemd)
++    endif()
+ endif()
+ 
+ # Assume that Linux has -Wl,--version-script and other platforms do not
+-- 
+1.9.1
+

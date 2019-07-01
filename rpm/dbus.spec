@@ -1,12 +1,9 @@
-# Conditional building of X11 related things
-%bcond_with X11
-
 Name:       dbus
 
 %define dbus_user_uid 81
 
 Summary:    D-Bus message bus
-Version:    1.10.8
+Version:    1.13.12
 Release:    1
 Group:      System/Libraries
 License:    GPLv2+ or AFL
@@ -14,27 +11,28 @@ URL:        http://www.freedesktop.org/software/dbus/
 Source0:    http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1:    dbus-user.socket
 Source2:    dbus-user.service
-Patch1:     0001-Start-dbus-as-early-as-possible.patch
+Source3:    dbus-system.socket
+Source4:    dbus-system.service
+Patch1:     0001-Enable-build-of-dbus-uuidgen-and-dbus-cleanup-socket.patch
 # FIXME: Probably we should get rid of this patch and make proper setgid
 # helper or so. Rumours say that this patch was about lipstick start and
 # boosters orientation.
 Patch2:     0002-patch-Disable-setuid-checking-due-to-it-conflicting-.patch
+Patch3:     0003-Set-DBUS_USER-to-dbus-instead-of-messagebus.patch
+Patch4:     0004-Enable-building-with-systemd.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
 Requires(preun): systemd
 Requires(post): systemd
 Requires(postun): systemd
+BuildRequires:  cmake
 BuildRequires:  expat-devel >= 1.95.5
 BuildRequires:  gettext
 BuildRequires:  libcap-devel
 BuildRequires:  libtool
-BuildRequires:  systemd-devel
-%if %{with X11}
-BuildRequires:  pkgconfig(x11)
-%endif
-Obsoletes:      %{name}-x11 < 1.6.20+git2
-Provides:       %{name}-x11
+BuildRequires:  pkgconfig(libsystemd)
+BuildRequires:  pkgconfig(systemd)
 
 %description
 D-Bus is a system for sending messages between applications. It is used both
@@ -73,28 +71,18 @@ Headers and static libraries for D-Bus.
 %setup -q -n %{name}-%{version}/dbus
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
-
-%reconfigure --disable-static \
-    --exec-prefix=/ \
-    --bindir=/bin \
-    --libexecdir=/%{_lib}/dbus-1 \
-    --sysconfdir=/etc \
-    --disable-tests \
-    --disable-asserts \
-    --disable-xml-docs \
-    --disable-doxygen-docs \
-    --disable-selinux \
-    --disable-libaudit \
-    --with-system-pid-file=%{_localstatedir}/run/messagebus.pid \
-    --with-dbus-user=dbus \
-    --with-systemdsystemunitdir="/%{_lib}/systemd/system" \
-%if %{with X11}
-    --with-x \
-%endif
-    --enable-systemd
-
+%cmake . -DCMAKE_INSTALL_PREFIX=/ \
+-DCMAKE_BUILD_TYPE=Release \
+-DDBUS_ENABLE_XML_DOCS=OFF \
+-DDBUS_BUILD_TESTS=OFF \
+-DDBUS_DISABLE_ASSERT=ON \
+-DDBUS_BUS_ENABLE_INOTIFY=ON \
+-DDBUS_ENABLE_PKGCONFIG=ON \
+-DDBUS_ENABLE_VERBOSE_MODE=OFF
 make %{?jobs:-j%jobs}
 
 %install
@@ -102,17 +90,29 @@ rm -rf %{buildroot}
 %make_install
 
 mkdir -p %{buildroot}%{_bindir}
-mv -f %{buildroot}/bin/dbus-launch %{buildroot}%{_bindir}
-
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
-
 mkdir -p %{buildroot}%{_libdir}/systemd/user
 install -m0644 %{SOURCE1} %{buildroot}%{_libdir}/systemd/user/dbus.socket
 install -m0644 %{SOURCE2} %{buildroot}%{_libdir}/systemd/user/dbus.service
 
+mkdir -p %{buildroot}%{_libdir}/systemd/system
+install -m0644 %{SOURCE3} %{buildroot}%{_libdir}/systemd/system/dbus.socket
+install -m0644 %{SOURCE4} %{buildroot}%{_libdir}/systemd/system/dbus.service
+
+mkdir -p %{buildroot}%{_libdir}/systemd/system/sockets.target.wants
+ln -fs ../dbus.socket %{buildroot}%{_libdir}/systemd/system/sockets.target.wants/dbus.socket
+mkdir -p %{buildroot}%{_libdir}/systemd/system/dbus.target.wants
+ln -fs ../dbus.socket %{buildroot}%{_libdir}/systemd/system/dbus.target.wants/dbus.socket
+
+mkdir -p %{buildroot}%{_libdir}/systemd/system/basic.target.wants
+ln -fs ../dbus.service %{buildroot}%{_libdir}/systemd/system/basic.target.wants/dbus.service
+
 # Deprecated. Use %{_datadir}/dbus-1/ instead.
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/session.d
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
+
+mkdir -p %{buildroot}/lib/dbus-1/
+mv ./bin/dbus-daemon-launch-helper %{buildroot}/lib/dbus-1/
 
 %pre
 # Add the "dbus" user and group
@@ -140,33 +140,32 @@ systemctl daemon-reload || :
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING
-/bin/dbus-cleanup-sockets
-/bin/dbus-daemon
+%license COPYING
+%{_bindir}/dbus-daemon
 %{_bindir}/dbus-launch
-/bin/dbus-monitor
-/bin/dbus-run-session
-/bin/dbus-send
-/bin/dbus-test-tool
-/bin/dbus-update-activation-environment
-/bin/dbus-uuidgen
+%{_bindir}/dbus-monitor
+%{_bindir}/dbus-run-session
+%{_bindir}/dbus-send
+%{_bindir}/dbus-test-tool
+%{_bindir}/dbus-update-activation-environment
+%{_bindir}/dbus-uuidgen
 %dir %{_sysconfdir}/dbus-1
-%config(noreplace) %{_sysconfdir}/dbus-1/session.conf
+%config %{_sysconfdir}/dbus-1/session.conf
 %dir %{_sysconfdir}/dbus-1/session.d
-%config(noreplace) %{_sysconfdir}/dbus-1/system.conf
+%config %{_sysconfdir}/dbus-1/system.conf
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_datadir}/dbus-1/session.d
 %dir %{_datadir}/dbus-1/system.d
 %dir %{_datadir}/dbus-1
-%config(noreplace) %{_datadir}/dbus-1/session.conf
-%config(noreplace) %{_datadir}/dbus-1/system.conf
+%config %{_datadir}/dbus-1/session.conf
+%config %{_datadir}/dbus-1/system.conf
 %dir /%{_lib}/dbus-1
 %{_libdir}/systemd/user/*
-/lib/systemd/system/dbus.service
-/lib/systemd/system/dbus.socket
-/lib/systemd/system/dbus.target.wants/dbus.socket
-/lib/systemd/system/basic.target.wants/dbus.service
-/lib/systemd/system/sockets.target.wants/dbus.socket
+%{_libdir}/systemd/system/dbus.service
+%{_libdir}/systemd/system/dbus.socket
+%{_libdir}/systemd/system/dbus.target.wants/dbus.socket
+%{_libdir}/systemd/system/basic.target.wants/dbus.service
+%{_libdir}/systemd/system/sockets.target.wants/dbus.socket
 %attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
@@ -184,9 +183,8 @@ systemctl daemon-reload || :
 %doc doc/introspect.dtd
 %doc doc/introspect.xsl
 %doc doc/system-activation.txt
-%doc %{_datadir}/doc/dbus/diagram.png
-%doc %{_datadir}/doc/dbus/diagram.svg
-%doc %{_datadir}/doc/dbus/system-activation.txt
+%doc doc/diagram.png
+%doc doc/diagram.svg
 %doc %{_datadir}/doc/dbus/examples/*
 
 %files devel
@@ -196,3 +194,5 @@ systemctl daemon-reload || :
 %dir %{_libdir}/dbus-1.0
 %{_libdir}/dbus-1.0/include/dbus/dbus-arch-deps.h
 %{_libdir}/pkgconfig/dbus-1.pc
+%{_libdir}/cmake/DBus1/DBus1Config.cmake
+%{_libdir}/cmake/DBus1/DBus1ConfigVersion.cmake

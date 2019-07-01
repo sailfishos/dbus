@@ -1,0 +1,59 @@
+From b677c8126902fb9097e27d440ca27175de47f4f5 Mon Sep 17 00:00:00 2001
+From: Niels Breet <niels.breet@jolla.com>
+Date: Fri, 26 Jul 2019 14:19:00 +0300
+Subject: [PATCH] Enable build of dbus-uuidgen and dbus-cleanup-sockets
+
+---
+ dbus/CMakeLists.txt  | 2 ++
+ tools/CMakeLists.txt | 8 ++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
+index 51b2aec..5846f97 100644
+--- a/dbus/CMakeLists.txt
++++ b/dbus/CMakeLists.txt
+@@ -55,6 +55,7 @@ set(DBUS_LIB_SOURCES
+     dbus-threads.c
+     dbus-transport.c
+     dbus-transport-socket.c
++    dbus-uuidgen.c
+     dbus-watch.c
+ )
+ 
+@@ -95,6 +96,7 @@ set(DBUS_LIB_HEADERS
+     dbus-threads-internal.h
+     dbus-transport.h
+     dbus-transport-protected.h
++    dbus-uuidgen.h
+     dbus-watch.h
+     ${CMAKE_BINARY_DIR}/config.h
+ )
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index 8cde1ff..d53a3be 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -31,6 +31,10 @@ set(dbus_update_activation_environment_SOURCES
+     tool-common.h
+ )
+ 
++set(dbus_uuidgen_SOURCES
++    dbus-uuidgen.c
++)
++
+ if(WIN32)
+ set(dbus_launch_SOURCES
+     dbus-launch-win.c
+@@ -107,6 +111,10 @@ add_executable(dbus-run-session ${dbus_run_session_SOURCES})
+ target_link_libraries(dbus-run-session ${DBUS_INTERNAL_LIBRARIES})
+ install(TARGETS dbus-run-session ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
++add_executable(dbus-uuidgen ${dbus_uuidgen_SOURCES})
++target_link_libraries(dbus-uuidgen ${DBUS_INTERNAL_LIBRARIES})
++install(TARGETS dbus-uuidgen ${INSTALL_TARGETS_DEFAULT_ARGS})
++
+ # create the /var/lib/dbus directory for dbus-uuidgen
+ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_LOCALSTATEDIR}/lib/dbus)
+ 
+-- 
+1.9.1
+
