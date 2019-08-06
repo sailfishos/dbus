@@ -1,3 +1,3 @@
 [submodule "dbus"]
 	path = dbus
-	url = git://anongit.freedesktop.org/dbus/dbus
+	url = https://git.sailfishos.org/mirror/dbus.git

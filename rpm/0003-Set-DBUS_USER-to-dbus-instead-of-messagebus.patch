@@ -1,0 +1,30 @@
+From 1aa5c79218680a383da6cacd53a10517415f9fdb Mon Sep 17 00:00:00 2001
+From: Niels Breet <niels.breet@jolla.com>
+Date: Mon, 29 Jul 2019 14:10:55 +0300
+Subject: [PATCH] Set DBUS_USER to dbus instead of messagebus and specify
+ configdir correctly
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 21c50d4..29e683a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -464,10 +464,10 @@ else(WIN32)
+     set(DBUS_SESSION_BUS_LISTEN_ADDRESS "unix:tmpdir=${DBUS_SESSION_SOCKET_DIR}" CACHE STRING "session bus default listening address")
+     set(DBUS_SESSION_BUS_CONNECT_ADDRESS "autolaunch:" CACHE STRING "session bus fallback address for clients")
+     set(sysconfdir "")
+-    set(configdir ${sysconfdir}/dbus-1 )
++    set(configdir /usr/share/dbus-1)
+     set(DBUS_SYSTEM_CONFIG_FILE  ${configdir}/system.conf)
+     set(DBUS_SESSION_CONFIG_FILE ${configdir}/session.conf)
+-    set(DBUS_USER "messagebus")
++    set(DBUS_USER "dbus")
+     set(DBUS_TEST_USER "nobody")
+   # For best security, assume that all non-Windows platforms can do
+   # credentials-passing.
+-- 
+1.9.1
+
