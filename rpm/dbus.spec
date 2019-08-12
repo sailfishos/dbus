@@ -151,15 +151,15 @@ systemctl daemon-reload || :
 /bin/dbus-update-activation-environment
 /bin/dbus-uuidgen
 %dir %{_sysconfdir}/dbus-1
-%config(noreplace) %{_sysconfdir}/dbus-1/session.conf
+%config %{_sysconfdir}/dbus-1/session.conf
 %dir %{_sysconfdir}/dbus-1/session.d
-%config(noreplace) %{_sysconfdir}/dbus-1/system.conf
+%config %{_sysconfdir}/dbus-1/system.conf
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_datadir}/dbus-1/session.d
 %dir %{_datadir}/dbus-1/system.d
 %dir %{_datadir}/dbus-1
-%config(noreplace) %{_datadir}/dbus-1/session.conf
-%config(noreplace) %{_datadir}/dbus-1/system.conf
+%config %{_datadir}/dbus-1/session.conf
+%config %{_datadir}/dbus-1/system.conf
 %dir /%{_lib}/dbus-1
 %{_libdir}/systemd/user/*
 /lib/systemd/system/dbus.service
