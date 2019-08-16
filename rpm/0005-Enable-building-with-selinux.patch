@@ -1,0 +1,61 @@
+From 3136431c12a91533c66a0610c30b7a13a1800ae4 Mon Sep 17 00:00:00 2001
+From: Matti Kosola <matti.kosola@jolla.com>
+Date: Thu, 15 Aug 2019 12:29:07 +0000
+Subject: [PATCH 5/7] Enable building with selinux
+
+Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
+---
+ CMakeLists.txt      | 8 +++++++-
+ dbus/CMakeLists.txt | 3 +++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 82751e87..f025d59b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -482,6 +482,11 @@ set(HAVE_SYSTEMD 1)
+ add_definitions(-DHAVE_SYSTEMD)
+ add_definitions(-DENABLE_TRADITIONAL_ACTIVATION)
+ 
++# Enable SELinux support unconditionally. --mkosola
++
++set(HAVE_SELINUX 1)
++add_definitions(-DHAVE_SELINUX)
++
+ ########### create config.h ###############
+ 
+ #include(ConfigureChecks.cmake)
+@@ -618,6 +623,7 @@ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  "
+ message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
+ else()
+ message("        Building systemd support: ${HAVE_SYSTEMD}                     ")
++message("        SELinux support:          ${HAVE_SELINUX}                     ")
+ message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
+ message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
+ message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
+@@ -679,7 +685,7 @@ add_custom_target(help-options
+ # create pkgconfig file
+ #
+ if(DBUS_ENABLE_PKGCONFIG)
+-    set(PLATFORM_LIBS pthread systemd ${LIBRT})
++    set(PLATFORM_LIBS pthread systemd libselinux ${LIBRT})
+     include(FindPkgConfig QUIET)
+     if(PKG_CONFIG_FOUND)
+         # convert lists of link libraries into -lstdc++ -lm etc..
+diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
+index 2d9da4d5..9f3ff5d7 100644
+--- a/dbus/CMakeLists.txt
++++ b/dbus/CMakeLists.txt
+@@ -287,6 +287,9 @@ else(WIN32)
+     if(HAVE_SYSTEMD)
+         target_link_libraries(dbus-1 systemd)
+     endif()
++    if(HAVE_SELINUX)
++        target_link_libraries(dbus-1 selinux)
++    endif()
+ endif()
+ 
+ # Assume that Linux has -Wl,--version-script and other platforms do not
+-- 
+2.20.1
+

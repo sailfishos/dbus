@@ -20,17 +20,22 @@ Patch1:     0001-Enable-build-of-dbus-uuidgen-and-dbus-cleanup-socket.patch
 Patch2:     0002-patch-Disable-setuid-checking-due-to-it-conflicting-.patch
 Patch3:     0003-Set-DBUS_USER-to-dbus-instead-of-messagebus.patch
 Patch4:     0004-Enable-building-with-systemd.patch
+Patch5:     0005-Enable-building-with-selinux.patch
+Patch6:     0006-Disable-selinux-from-config-file.patch
+Patch7:     0007-Enable-building-with-libaudit.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
 Requires(preun): systemd
 Requires(post): systemd
 Requires(postun): systemd
+BuildRequires:  audit-libs-devel
 BuildRequires:  cmake
 BuildRequires:  expat-devel >= 1.95.5
 BuildRequires:  gettext
-BuildRequires:  libcap-devel
+BuildRequires:  libcap-ng-devel
 BuildRequires:  libtool
+BuildRequires:  pkgconfig(libselinux)
 BuildRequires:  pkgconfig(libsystemd)
 BuildRequires:  pkgconfig(systemd)
 
@@ -73,6 +78,9 @@ Headers and static libraries for D-Bus.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
 %cmake . -DCMAKE_INSTALL_PREFIX=/ \
