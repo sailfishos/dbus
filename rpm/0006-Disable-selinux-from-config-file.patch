@@ -1,0 +1,68 @@
+From 5d6df05e83454f7dc0b8c474cb4b14a1d2c0a919 Mon Sep 17 00:00:00 2001
+From: Matti Kosola <matti.kosola@jolla.com>
+Date: Thu, 15 Aug 2019 12:42:23 +0000
+Subject: [PATCH 6/7] Disable selinux from config file
+
+Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
+---
+ bus/selinux.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/bus/selinux.c b/bus/selinux.c
+index a005b84f..2da38783 100644
+--- a/bus/selinux.c
++++ b/bus/selinux.c
+@@ -55,6 +55,8 @@
+ #include <libaudit.h>
+ #endif /* HAVE_LIBAUDIT */
+ 
++#include <dbus/dbus-file.h>
++
+ #define BUS_SID_FROM_SELINUX(sid)  ((BusSELinuxID*) (sid))
+ #define SELINUX_SID_FROM_BUS(sid)  ((security_id_t) (sid))
+ 
+@@ -213,6 +215,8 @@ dbus_bool_t
+ bus_selinux_pre_init (void)
+ {
+ #ifdef HAVE_SELINUX
++#define _ETC_SELINUX_CONFIG "/etc/selinux/config"
++#define _SELINUX_DISABLED   "SELINUX=disabled"
+   int r;
+   _dbus_assert (bus_sid == SECSID_WILD);
+   
+@@ -225,6 +229,32 @@ bus_selinux_pre_init (void)
+       return FALSE;
+     }
+ 
++  if (r != 0 && _dbus_file_exists (_ETC_SELINUX_CONFIG))
++    {
++      DBusString fn;
++      DBusString str;
++      DBusError error;
++      dbus_error_init (&error);
++      _dbus_string_init (&str);
++      _dbus_string_init_const (&fn, _ETC_SELINUX_CONFIG);
++      if (!_dbus_file_get_contents (&str, &fn, &error))
++        {
++          _dbus_verbose ("Failed to read SELinux config file: %s\n",
++                         error.message);
++          dbus_error_free (&error);
++        }
++      else
++        {
++          int found;
++          if (_dbus_string_find (&str, 0, _SELINUX_DISABLED, &found))
++            {
++              _dbus_verbose ("SELinux disabled from configuration file.");
++              r = 0;
++            }
++        }
++      _dbus_string_free(&str);
++    }
++
+   selinux_enabled = r != 0;
+   return TRUE;
+ #else
+-- 
+2.20.1
+
