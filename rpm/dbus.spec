@@ -25,6 +25,7 @@ Patch6:     0006-Disable-selinux-from-config-file.patch
 Patch7:     0007-Enable-building-with-libaudit.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
+Requires:   filesystem >= 3.2
 Requires(pre): /usr/sbin/useradd
 Requires(preun): systemd
 Requires(post): systemd
@@ -119,8 +120,8 @@ ln -fs ../dbus.service %{buildroot}%{_libdir}/systemd/system/basic.target.wants/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/session.d
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 
-mkdir -p %{buildroot}/lib/dbus-1/
-mv ./bin/dbus-daemon-launch-helper %{buildroot}/lib/dbus-1/
+mkdir -p %{buildroot}%{_libdir}/dbus-1/
+mv ./bin/dbus-daemon-launch-helper %{buildroot}%{_libdir}/dbus-1/
 
 %pre
 # Add the "dbus" user and group
@@ -167,14 +168,14 @@ systemctl daemon-reload || :
 %dir %{_datadir}/dbus-1
 %config %{_datadir}/dbus-1/session.conf
 %config %{_datadir}/dbus-1/system.conf
-%dir /%{_lib}/dbus-1
+%dir %{_libdir}/dbus-1
 %{_libdir}/systemd/user/*
 %{_libdir}/systemd/system/dbus.service
 %{_libdir}/systemd/system/dbus.socket
 %{_libdir}/systemd/system/dbus.target.wants/dbus.socket
 %{_libdir}/systemd/system/basic.target.wants/dbus.service
 %{_libdir}/systemd/system/sockets.target.wants/dbus.socket
-%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
+%attr(4750,root,dbus) %{_libdir}/dbus-1/dbus-daemon-launch-helper
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
