@@ -1,6 +1,7 @@
 Name:       dbus
 
-%define dbus_user_uid 81
+%define dbus_user_uid 82
+%define dbus_user_name messagebus
 
 Summary:    D-Bus message bus
 Version:    1.13.12
@@ -18,7 +19,7 @@ Patch1:     0001-Enable-build-of-dbus-uuidgen-and-dbus-cleanup-socket.patch
 # helper or so. Rumours say that this patch was about lipstick start and
 # boosters orientation.
 Patch2:     0002-patch-Disable-setuid-checking-due-to-it-conflicting-.patch
-Patch3:     0003-Set-DBUS_USER-to-dbus-instead-of-messagebus.patch
+Patch3:     0003-Specify-configdir-correctly.patch
 Patch4:     0004-Enable-building-with-systemd.patch
 Patch5:     0005-Enable-building-with-selinux.patch
 Patch6:     0006-Disable-selinux-from-config-file.patch
@@ -123,10 +124,10 @@ mkdir -p %{buildroot}/lib/dbus-1/
 mv ./bin/dbus-daemon-launch-helper %{buildroot}/lib/dbus-1/
 
 %pre
-# Add the "dbus" user and group
-[ -e /usr/sbin/groupadd ] && /usr/sbin/groupadd -r -g %{dbus_user_uid} dbus 2>/dev/null || :
+# Add user and group for system daemon
+[ -e /usr/sbin/groupadd ] && /usr/sbin/groupadd -r -g %{dbus_user_uid} %{dbus_user_name} 2>/dev/null || :
 [ -e /usr/sbin/useradd ] && /usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} \
--g %{dbus_user_uid} -s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
+-g %{dbus_user_uid} -s /sbin/nologin -r -d '/' %{dbus_user_name} 2> /dev/null || :
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -174,7 +175,7 @@ systemctl daemon-reload || :
 %{_libdir}/systemd/system/dbus.target.wants/dbus.socket
 %{_libdir}/systemd/system/basic.target.wants/dbus.service
 %{_libdir}/systemd/system/sockets.target.wants/dbus.socket
-%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
+%attr(4750,root,messagebus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
