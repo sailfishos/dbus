@@ -84,6 +84,7 @@ Headers and static libraries for D-Bus.
 
 %build
 %cmake . -DCMAKE_INSTALL_PREFIX=/ \
+-DCMAKE_INSTALL_LIBEXECDIR=%{_libexecdir}/dbus-1 \
 -DCMAKE_BUILD_TYPE=Release \
 -DDBUS_ENABLE_XML_DOCS=OFF \
 -DDBUS_BUILD_TESTS=OFF \
@@ -119,8 +120,8 @@ ln -fs ../dbus.service %{buildroot}%{_libdir}/systemd/system/basic.target.wants/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/session.d
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 
-mkdir -p %{buildroot}/lib/dbus-1/
-mv ./bin/dbus-daemon-launch-helper %{buildroot}/lib/dbus-1/
+install -d %{buildroot}%{_libexecdir}/dbus-1
+install -m4750 ./bin/dbus-daemon-launch-helper %{buildroot}%{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 
 %pre
 # Add the "dbus" user and group
@@ -167,14 +168,14 @@ systemctl daemon-reload || :
 %dir %{_datadir}/dbus-1
 %config %{_datadir}/dbus-1/session.conf
 %config %{_datadir}/dbus-1/system.conf
-%dir /%{_lib}/dbus-1
 %{_libdir}/systemd/user/*
 %{_libdir}/systemd/system/dbus.service
 %{_libdir}/systemd/system/dbus.socket
 %{_libdir}/systemd/system/dbus.target.wants/dbus.socket
 %{_libdir}/systemd/system/basic.target.wants/dbus.service
 %{_libdir}/systemd/system/sockets.target.wants/dbus.socket
-%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
+%dir %{_libexecdir}/dbus-1
+%attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
