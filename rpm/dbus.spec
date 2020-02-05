@@ -178,7 +178,6 @@ systemctl daemon-reload || :
 %{_libdir}/systemd/system/sockets.target.wants/dbus.socket
 %dir %{_libexecdir}/dbus-1
 %attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
-%dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
