@@ -6,7 +6,6 @@ Name:       dbus
 Summary:    D-Bus message bus
 Version:    1.13.12
 Release:    1
-Group:      System/Libraries
 License:    GPLv2+ or AFL
 URL:        http://www.freedesktop.org/software/dbus/
 Source0:    http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
@@ -24,6 +23,7 @@ Patch4:     0004-Enable-building-with-systemd.patch
 Patch5:     0005-Enable-building-with-selinux.patch
 Patch6:     0006-Disable-selinux-from-config-file.patch
 Patch7:     0007-Enable-building-with-libaudit.patch
+Patch8:     0008-Check-for-monotonic-clock.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -47,7 +47,6 @@ messaging facility.
 
 %package libs
 Summary:    Libraries for accessing D-Bus
-Group:      System/Libraries
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -56,7 +55,6 @@ Lowlevel libraries for accessing D-Bus.
 
 %package doc
 Summary:    Developer documentation for D-Bus
-Group:      Documentation
 Requires:   %{name} = %{version}-%{release}
 
 %description doc
@@ -66,7 +64,6 @@ other supporting documentation such as the introspect dtd file.
 
 %package devel
 Summary:    Libraries and headers for D-Bus
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 Requires:   pkgconfig
 
@@ -74,14 +71,7 @@ Requires:   pkgconfig
 Headers and static libraries for D-Bus.
 
 %prep
-%setup -q -n %{name}-%{version}/dbus
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
+%autosetup -p1 -n %{name}-%{version}/dbus
 
 %build
 %cmake . -DCMAKE_INSTALL_PREFIX=/ \
@@ -177,7 +167,6 @@ systemctl daemon-reload || :
 %{_libdir}/systemd/system/sockets.target.wants/dbus.socket
 %dir %{_libexecdir}/dbus-1
 %attr(4750,root,messagebus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
-%dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/interfaces
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
