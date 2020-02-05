@@ -23,6 +23,7 @@ Patch4:     0004-Enable-building-with-systemd.patch
 Patch5:     0005-Enable-building-with-selinux.patch
 Patch6:     0006-Disable-selinux-from-config-file.patch
 Patch7:     0007-Enable-building-with-libaudit.patch
+Patch8:     0008-Check-for-monotonic-clock.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -81,6 +82,7 @@ Headers and static libraries for D-Bus.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 %cmake . -DCMAKE_INSTALL_PREFIX=/ \
