@@ -91,21 +91,21 @@ rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
-mkdir -p %{buildroot}%{_libdir}/systemd/user
-install -m0644 %{SOURCE1} %{buildroot}%{_libdir}/systemd/user/dbus.socket
-install -m0644 %{SOURCE2} %{buildroot}%{_libdir}/systemd/user/dbus.service
+mkdir -p %{buildroot}%{_userunitdir}
+install -m0644 %{SOURCE1} %{buildroot}%{_userunitdir}/dbus.socket
+install -m0644 %{SOURCE2} %{buildroot}%{_userunitdir}/dbus.service
 
-mkdir -p %{buildroot}%{_libdir}/systemd/system
-install -m0644 %{SOURCE3} %{buildroot}%{_libdir}/systemd/system/dbus.socket
-install -m0644 %{SOURCE4} %{buildroot}%{_libdir}/systemd/system/dbus.service
+mkdir -p %{buildroot}%{_unitdir}
+install -m0644 %{SOURCE3} %{buildroot}%{_unitdir}/dbus.socket
+install -m0644 %{SOURCE4} %{buildroot}%{_unitdir}/dbus.service
 
-mkdir -p %{buildroot}%{_libdir}/systemd/system/sockets.target.wants
-ln -fs ../dbus.socket %{buildroot}%{_libdir}/systemd/system/sockets.target.wants/dbus.socket
-mkdir -p %{buildroot}%{_libdir}/systemd/system/dbus.target.wants
-ln -fs ../dbus.socket %{buildroot}%{_libdir}/systemd/system/dbus.target.wants/dbus.socket
+mkdir -p %{buildroot}%{_unitdir}/sockets.target.wants
+ln -fs ../dbus.socket %{buildroot}%{_unitdir}/sockets.target.wants/dbus.socket
+mkdir -p %{buildroot}%{_unitdir}/dbus.target.wants
+ln -fs ../dbus.socket %{buildroot}%{_unitdir}/dbus.target.wants/dbus.socket
 
-mkdir -p %{buildroot}%{_libdir}/systemd/system/basic.target.wants
-ln -fs ../dbus.service %{buildroot}%{_libdir}/systemd/system/basic.target.wants/dbus.service
+mkdir -p %{buildroot}%{_unitdir}/basic.target.wants
+ln -fs ../dbus.service %{buildroot}%{_unitdir}/basic.target.wants/dbus.service
 
 # Deprecated. Use %{_datadir}/dbus-1/ instead.
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/session.d
@@ -159,12 +159,12 @@ systemctl daemon-reload || :
 %dir %{_datadir}/dbus-1
 %config %{_datadir}/dbus-1/session.conf
 %config %{_datadir}/dbus-1/system.conf
-%{_libdir}/systemd/user/*
-%{_libdir}/systemd/system/dbus.service
-%{_libdir}/systemd/system/dbus.socket
-%{_libdir}/systemd/system/dbus.target.wants/dbus.socket
-%{_libdir}/systemd/system/basic.target.wants/dbus.service
-%{_libdir}/systemd/system/sockets.target.wants/dbus.socket
+%{_userunitdir}/*
+%{_unitdir}/dbus.service
+%{_unitdir}/dbus.socket
+%{_unitdir}/dbus.target.wants/dbus.socket
+%{_unitdir}/basic.target.wants/dbus.service
+%{_unitdir}/sockets.target.wants/dbus.socket
 %dir %{_libexecdir}/dbus-1
 %attr(4750,root,messagebus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 %{_datadir}/dbus-1/interfaces
