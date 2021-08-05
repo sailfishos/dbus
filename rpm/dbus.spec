@@ -39,6 +39,7 @@ BuildRequires:  libtool
 BuildRequires:  pkgconfig(libselinux)
 BuildRequires:  pkgconfig(libsystemd)
 BuildRequires:  pkgconfig(systemd)
+BuildRequires:  libstdc++-devel
 
 %description
 D-Bus is a system for sending messages between applications. It is used both
