@@ -1,7 +1,7 @@
-From 5d6df05e83454f7dc0b8c474cb4b14a1d2c0a919 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matti Kosola <matti.kosola@jolla.com>
 Date: Thu, 15 Aug 2019 12:42:23 +0000
-Subject: [PATCH 6/7] Disable selinux from config file
+Subject: [PATCH] Disable selinux from config file
 
 Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
  1 file changed, 30 insertions(+)
 
 diff --git a/bus/selinux.c b/bus/selinux.c
-index a005b84f..2da38783 100644
+index 42017e7a..1684412d 100644
 --- a/bus/selinux.c
 +++ b/bus/selinux.c
 @@ -55,6 +55,8 @@
@@ -21,7 +21,7 @@ index a005b84f..2da38783 100644
  #define BUS_SID_FROM_SELINUX(sid)  ((BusSELinuxID*) (sid))
  #define SELINUX_SID_FROM_BUS(sid)  ((security_id_t) (sid))
  
-@@ -213,6 +215,8 @@ dbus_bool_t
+@@ -237,6 +239,8 @@ dbus_bool_t
  bus_selinux_pre_init (void)
  {
  #ifdef HAVE_SELINUX
@@ -30,7 +30,7 @@ index a005b84f..2da38783 100644
    int r;
    _dbus_assert (bus_sid == SECSID_WILD);
    
-@@ -225,6 +229,32 @@ bus_selinux_pre_init (void)
+@@ -249,6 +253,32 @@ bus_selinux_pre_init (void)
        return FALSE;
      }
  
@@ -63,6 +63,3 @@ index a005b84f..2da38783 100644
    selinux_enabled = r != 0;
    return TRUE;
  #else
--- 
-2.20.1
-

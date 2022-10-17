@@ -1,4 +1,4 @@
-From bb264396f9c678af262276d689253a1302443879 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Juho=20H=C3=A4m=C3=A4l=C3=A4inen?=
  <juho.hamalainen@jolla.com>
 Date: Wed, 5 Feb 2020 11:08:07 +0200
@@ -9,10 +9,10 @@ Subject: [PATCH] Check for monotonic clock.
  1 file changed, 8 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 883fefa9..0259b363 100644
+index 7cf9c01a..7d724075 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -435,6 +435,14 @@ if(UNIX)
+@@ -597,6 +597,14 @@ if(UNIX)
      endif()
  endif()
  
@@ -27,6 +27,3 @@ index 883fefa9..0259b363 100644
   # Not used on Windows, where there is no system bus
  set(DBUS_SYSTEM_PID_FILE ${DBUS_RUNSTATEDIR}/dbus/pid)
  
--- 
-2.20.1
-

@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matti Kosola <matti.kosola@jolla.com>
+Date: Thu, 15 Aug 2019 12:29:07 +0000
+Subject: [PATCH] Enable building with selinux
+
+Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
+---
+ CMakeLists.txt      | 7 +++++++
+ dbus/CMakeLists.txt | 3 +++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fc405d2c..24d9bc84 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -636,6 +636,12 @@ endif()
+ 
+ set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon executable")
+ 
++
++# Enable SELinux support unconditionally. --mkosola
++
++set(HAVE_SELINUX 1)
++add_definitions(-DHAVE_SELINUX)
++
+ ########### create config.h ###############
+ 
+ #include(ConfigureChecks.cmake)
+@@ -777,6 +783,7 @@ if(WIN32)
+ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  ")
+ message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
+ else()
++message("        SELinux support:          ${HAVE_SELINUX}                     ")
+ message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
+ message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
+ message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
+diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
+index 9e3f0a14..cda84851 100644
+--- a/dbus/CMakeLists.txt
++++ b/dbus/CMakeLists.txt
+@@ -296,6 +296,9 @@ else(WIN32)
+         target_link_libraries(dbus-1 ${Backtrace_LIBRARY})
+         target_include_directories(dbus-1 PRIVATE ${Backtrace_INCLUDE_DIR})
+     endif()
++    if(HAVE_SELINUX)
++        target_link_libraries(dbus-1 selinux)
++    endif()
+ endif()
+ 
+ target_include_directories(dbus-1 INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dbus-1.0>;$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/dbus-1.0/include>)
