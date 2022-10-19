@@ -22,6 +22,7 @@ Patch3:     0003-Disable-selinux-from-config-file.patch
 Patch4:     0004-Enable-building-with-libaudit.patch
 Patch5:     0005-Check-for-monotonic-clock.patch
 Patch6:     0006-Fix-sysconfdir-on-.pc.patch
+Patch7:     0007-Revert-Stop-using-selinux_set_mapping-function.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
