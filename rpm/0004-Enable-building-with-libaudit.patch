@@ -1,19 +1,19 @@
-From 64f4e2b19e9042aa79503a99de4566c218459c2f Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matti Kosola <matti.kosola@jolla.com>
 Date: Fri, 16 Aug 2019 09:15:06 +0300
-Subject: [PATCH 7/7] Enable building with libaudit
+Subject: [PATCH] Enable building with libaudit
 
 Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
 ---
- CMakeLists.txt      | 8 +++++++-
+ CMakeLists.txt      | 6 ++++++
  dbus/CMakeLists.txt | 3 +++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ 2 files changed, 9 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f025d59b..8981927a 100644
+index 24d9bc84..7cf9c01a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -487,6 +487,11 @@ add_definitions(-DENABLE_TRADITIONAL_ACTIVATION)
+@@ -642,6 +642,11 @@ set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon exe
  set(HAVE_SELINUX 1)
  add_definitions(-DHAVE_SELINUX)
  
@@ -25,28 +25,19 @@ index f025d59b..8981927a 100644
  ########### create config.h ###############
  
  #include(ConfigureChecks.cmake)
-@@ -624,6 +629,7 @@ message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS}
+@@ -784,6 +789,7 @@ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  "
+ message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
  else()
- message("        Building systemd support: ${HAVE_SYSTEMD}                     ")
  message("        SELinux support:          ${HAVE_SELINUX}                     ")
 +message("        Libaudit support:         ${HAVE_LIBAUDIT}                    ")
  message("        System bus address:       ${DBUS_SYSTEM_BUS_DEFAULT_ADDRESS}  ")
  message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
  message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
-@@ -685,7 +691,7 @@ add_custom_target(help-options
- # create pkgconfig file
- #
- if(DBUS_ENABLE_PKGCONFIG)
--    set(PLATFORM_LIBS pthread systemd libselinux ${LIBRT})
-+    set(PLATFORM_LIBS pthread systemd libselinux libaudit ${LIBRT})
-     include(FindPkgConfig QUIET)
-     if(PKG_CONFIG_FOUND)
-         # convert lists of link libraries into -lstdc++ -lm etc..
 diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
-index 9f3ff5d7..36eafc14 100644
+index cda84851..e1da99f4 100644
 --- a/dbus/CMakeLists.txt
 +++ b/dbus/CMakeLists.txt
-@@ -290,6 +290,9 @@ else(WIN32)
+@@ -299,6 +299,9 @@ else(WIN32)
      if(HAVE_SELINUX)
          target_link_libraries(dbus-1 selinux)
      endif()
@@ -55,7 +46,4 @@ index 9f3ff5d7..36eafc14 100644
 +    endif()
  endif()
  
- # Assume that Linux has -Wl,--version-script and other platforms do not
--- 
-2.20.1
-
+ target_include_directories(dbus-1 INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dbus-1.0>;$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/dbus-1.0/include>)

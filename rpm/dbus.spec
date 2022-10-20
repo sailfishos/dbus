@@ -4,7 +4,7 @@ Name:       dbus
 %define dbus_user_name messagebus
 
 Summary:    D-Bus message bus
-Version:    1.13.12
+Version:    1.14.4
 Release:    1
 License:    GPLv2+ or AFL
 URL:        http://www.freedesktop.org/software/dbus/
@@ -13,17 +13,16 @@ Source1:    dbus-user.socket
 Source2:    dbus-user.service
 Source3:    dbus-system.socket
 Source4:    dbus-system.service
-Patch1:     0001-Enable-build-of-dbus-uuidgen-and-dbus-cleanup-socket.patch
 # FIXME: Probably we should get rid of this patch and make proper setgid
 # helper or so. Rumours say that this patch was about lipstick start and
 # boosters orientation.
-Patch2:     0002-patch-Disable-setuid-checking-due-to-it-conflicting-.patch
-Patch3:     0003-Specify-configdir-correctly.patch
-Patch4:     0004-Enable-building-with-systemd.patch
-Patch5:     0005-Enable-building-with-selinux.patch
-Patch6:     0006-Disable-selinux-from-config-file.patch
-Patch7:     0007-Enable-building-with-libaudit.patch
-Patch8:     0008-Check-for-monotonic-clock.patch
+Patch1:     0001-Disable-setuid-checking-due-to-it-conflicting-with-s.patch
+Patch2:     0002-Enable-building-with-selinux.patch
+Patch3:     0003-Disable-selinux-from-config-file.patch
+Patch4:     0004-Enable-building-with-libaudit.patch
+Patch5:     0005-Check-for-monotonic-clock.patch
+Patch6:     0006-Fix-sysconfdir-on-.pc.patch
+Patch7:     0007-Revert-Stop-using-selinux_set_mapping-function.patch
 Requires:   %{name}-libs = %{version}
 Requires:   systemd
 Requires(pre): /usr/sbin/useradd
@@ -74,7 +73,7 @@ Headers and static libraries for D-Bus.
 %autosetup -p1 -n %{name}-%{version}/dbus
 
 %build
-%cmake . -DCMAKE_INSTALL_PREFIX=/ \
+%cmake . \
 -DCMAKE_INSTALL_LIBEXECDIR=%{_libexecdir}/dbus-1 \
 -DCMAKE_BUILD_TYPE=Release \
 -DDBUS_ENABLE_XML_DOCS=OFF \
@@ -83,10 +82,10 @@ Headers and static libraries for D-Bus.
 -DDBUS_BUS_ENABLE_INOTIFY=ON \
 -DDBUS_ENABLE_PKGCONFIG=ON \
 -DDBUS_ENABLE_VERBOSE_MODE=OFF
-make %{?jobs:-j%jobs}
+
+%make_build
 
 %install
-rm -rf %{buildroot}
 %make_install
 
 mkdir -p %{buildroot}%{_bindir}
@@ -141,6 +140,7 @@ systemctl daemon-reload || :
 %files
 %defattr(-,root,root,-)
 %license COPYING
+%{_bindir}/dbus-cleanup-sockets
 %{_bindir}/dbus-daemon
 %{_bindir}/dbus-launch
 %{_bindir}/dbus-monitor
@@ -164,6 +164,7 @@ systemctl daemon-reload || :
 %{_unitdir}/dbus.socket
 %{_unitdir}/dbus.target.wants/dbus.socket
 %{_unitdir}/basic.target.wants/dbus.service
+%{_unitdir}/multi-user.target.wants/dbus.service
 %{_unitdir}/sockets.target.wants/dbus.socket
 %dir %{_libexecdir}/dbus-1
 %attr(4750,root,messagebus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper

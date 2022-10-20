@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Pekka Vuorela <pekka.vuorela@jolla.com>
+Date: Tue, 18 Oct 2022 14:41:24 +0300
+Subject: [PATCH] Fix sysconfdir on .pc
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7d724075..5f9d77f9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -875,7 +875,7 @@ if(DBUS_ENABLE_PKGCONFIG)
+         set(bindir "\${prefix}/${CMAKE_INSTALL_BINDIR}")
+         set(libdir "\${prefix}/${CMAKE_INSTALL_LIBDIR}")
+         set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+-        set(sysconfdir "\${prefix}/${CMAKE_INSTALL_SYSCONFDIR}")
++        set(sysconfdir "${CMAKE_INSTALL_FULL_SYSCONFDIR}")
+         set(datadir "\${prefix}/${CMAKE_INSTALL_DATADIR}")
+         set(datarootdir "\${prefix}/${CMAKE_INSTALL_DATADIR}")
+         set(dbus_daemondir "\${prefix}/${CMAKE_INSTALL_BINDIR}")
