@@ -13,10 +13,10 @@ This reverts commit 6072f8b24153d844a3033108a17bcd0c1a967816.
  1 file changed, 33 insertions(+), 42 deletions(-)
 
 diff --git a/bus/selinux.c b/bus/selinux.c
-index 1684412d..49b16b1b 100644
+index 587ed693..763fdfd3 100644
 --- a/bus/selinux.c
 +++ b/bus/selinux.c
-@@ -286,6 +286,24 @@ bus_selinux_pre_init (void)
+@@ -285,6 +285,24 @@ bus_selinux_pre_init (void)
  #endif
  }
  
@@ -41,7 +41,7 @@ index 1684412d..49b16b1b 100644
  /**
   * Establish dynamic object class and permission mapping and
   * initialize the user space access vector cache (AVC) for D-Bus and set up
-@@ -307,6 +325,13 @@ bus_selinux_full_init (BusContext *context, DBusError *error)
+@@ -306,6 +324,13 @@ bus_selinux_full_init (BusContext *context, DBusError *error)
  
    _dbus_verbose ("SELinux is enabled in this kernel.\n");
  
@@ -55,7 +55,7 @@ index 1684412d..49b16b1b 100644
    avc_entry_ref_init (&aeref);
    if (avc_open (NULL, 0) < 0)
      {
-@@ -421,53 +446,19 @@ error:
+@@ -420,53 +445,19 @@ error:
  static dbus_bool_t
  bus_selinux_check (BusSELinuxID        *sender_sid,
                     BusSELinuxID        *override_sid,
@@ -113,7 +113,7 @@ index 1684412d..49b16b1b 100644
      {
      switch (errno)
        {
-@@ -534,8 +525,8 @@ bus_selinux_allows_acquire_service (DBusConnection     *connection,
+@@ -533,8 +524,8 @@ bus_selinux_allows_acquire_service (DBusConnection     *connection,
    
    ret = bus_selinux_check (connection_sid,
  			   service_sid,
@@ -124,7 +124,7 @@ index 1684412d..49b16b1b 100644
  			   &auxdata);
  
    _dbus_string_free (&auxdata);
-@@ -663,8 +654,8 @@ bus_selinux_allows_send (DBusConnection     *sender,
+@@ -662,8 +653,8 @@ bus_selinux_allows_send (DBusConnection     *sender,
  
    ret = bus_selinux_check (sender_sid, 
  			   recipient_sid,

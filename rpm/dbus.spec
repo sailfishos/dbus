@@ -4,7 +4,7 @@ Name:       dbus
 %define dbus_user_name messagebus
 
 Summary:    D-Bus message bus
-Version:    1.14.4
+Version:    1.14.10
 Release:    1
 License:    GPLv2+ or AFL
 URL:        http://www.freedesktop.org/software/dbus/
