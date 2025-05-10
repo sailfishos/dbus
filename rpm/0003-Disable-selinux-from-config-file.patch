@@ -9,10 +9,10 @@ Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
  1 file changed, 30 insertions(+)
 
 diff --git a/bus/selinux.c b/bus/selinux.c
-index c3cca7f8..587ed693 100644
+index 74d0e347623fbf9996ea18903e75b35905e4b8fe..1dd6f73dfc9883b9d081f51cb9d7c42a9cf0a4d6 100644
 --- a/bus/selinux.c
 +++ b/bus/selinux.c
-@@ -55,6 +55,8 @@
+@@ -57,6 +57,8 @@
  #include <libaudit.h>
  #endif /* HAVE_LIBAUDIT */
  
@@ -21,7 +21,7 @@ index c3cca7f8..587ed693 100644
  #define BUS_SID_FROM_SELINUX(sid)  ((BusSELinuxID*) (sid))
  #define SELINUX_SID_FROM_BUS(sid)  ((security_id_t) (sid))
  
-@@ -236,6 +238,8 @@ dbus_bool_t
+@@ -238,6 +240,8 @@ dbus_bool_t
  bus_selinux_pre_init (void)
  {
  #ifdef HAVE_SELINUX
@@ -30,7 +30,7 @@ index c3cca7f8..587ed693 100644
    int r;
    _dbus_assert (bus_sid == SECSID_WILD);
    
-@@ -248,6 +252,32 @@ bus_selinux_pre_init (void)
+@@ -250,6 +254,32 @@ bus_selinux_pre_init (void)
        return FALSE;
      }
  

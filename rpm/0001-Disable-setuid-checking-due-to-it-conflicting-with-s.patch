@@ -9,10 +9,10 @@ Signed-off-by: Carsten Munk <carsten.munk@jollamobile.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/dbus/dbus-sysdeps-unix.c b/dbus/dbus-sysdeps-unix.c
-index 099637cb..23b36512 100644
+index 87ba2d86a82c350782f3b26baaa8b675f41beb8f..cf2c9608b7c32a3e316b1539b63ebb7ff0fbcabb 100644
 --- a/dbus/dbus-sysdeps-unix.c
 +++ b/dbus/dbus-sysdeps-unix.c
-@@ -4816,6 +4816,7 @@ _dbus_fd_set_all_close_on_exec (void)
+@@ -5001,6 +5001,7 @@ _dbus_fd_set_all_close_on_exec (void)
  dbus_bool_t
  _dbus_check_setuid (void)
  {
