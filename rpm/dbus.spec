@@ -4,11 +4,11 @@ Name:       dbus
 %define dbus_user_name messagebus
 
 Summary:    D-Bus message bus
-Version:    1.14.10
+Version:    1.16.2
 Release:    1
 License:    GPLv2+ or AFL
-URL:        http://www.freedesktop.org/software/dbus/
-Source0:    http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
+URL:        https://github.com/sailfishos/dbus
+Source0:    %{name}-%{version}.tar.gz
 Source1:    dbus-user.socket
 Source2:    dbus-user.service
 Source3:    dbus-system.socket
@@ -73,7 +73,7 @@ Headers and static libraries for D-Bus.
 %autosetup -p1 -n %{name}-%{version}/dbus
 
 %build
-%cmake . \
+%cmake \
 -DCMAKE_INSTALL_LIBEXECDIR=%{_libexecdir}/dbus-1 \
 -DCMAKE_BUILD_TYPE=Release \
 -DDBUS_ENABLE_XML_DOCS=OFF \
@@ -83,10 +83,10 @@ Headers and static libraries for D-Bus.
 -DDBUS_ENABLE_PKGCONFIG=ON \
 -DDBUS_ENABLE_VERBOSE_MODE=OFF
 
-%make_build
+%cmake_build
 
 %install
-%make_install
+%cmake_install
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
@@ -138,7 +138,6 @@ systemctl daemon-reload || :
 %postun libs -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %license COPYING
 %{_bindir}/dbus-cleanup-sockets
 %{_bindir}/dbus-daemon
@@ -175,11 +174,9 @@ systemctl daemon-reload || :
 %dir %{_localstatedir}/lib/dbus
 
 %files libs
-%defattr(-,root,root,-)
 %{_libdir}/libdbus-1.so.3*
 
 %files doc
-%defattr(-,root,root,-)
 %doc doc/introspect.dtd
 %doc doc/introspect.xsl
 %doc doc/system-activation.txt
@@ -188,7 +185,6 @@ systemctl daemon-reload || :
 %doc %{_datadir}/doc/dbus/examples/*
 
 %files devel
-%defattr(-,root,root,-)
 %{_libdir}/libdbus-1.so
 %{_includedir}/dbus-1.0/dbus/dbus*.h
 %dir %{_libdir}/dbus-1.0

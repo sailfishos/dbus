@@ -8,10 +8,10 @@ Subject: [PATCH] Fix sysconfdir on .pc
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7d724075..5f9d77f9 100644
+index bbca506f4e32b5cdf73e2b92d9a7ec504cb2f574..349291094af15959204c7a285d1297dd0af31582 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -875,7 +875,7 @@ if(DBUS_ENABLE_PKGCONFIG)
+@@ -865,7 +865,7 @@ if(DBUS_ENABLE_PKGCONFIG)
          set(bindir "\${prefix}/${CMAKE_INSTALL_BINDIR}")
          set(libdir "\${prefix}/${CMAKE_INSTALL_LIBDIR}")
          set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")

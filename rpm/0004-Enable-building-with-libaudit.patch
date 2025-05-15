@@ -10,10 +10,10 @@ Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
  2 files changed, 9 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 24d9bc84..7cf9c01a 100644
+index 61f4715d949ba38cd2f82adcd44ad08897abbb3f..abdfa78e705447d6510f7bfaa9e7df719cc455a5 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -642,6 +642,11 @@ set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon exe
+@@ -636,6 +636,11 @@ set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon exe
  set(HAVE_SELINUX 1)
  add_definitions(-DHAVE_SELINUX)
  
@@ -25,7 +25,7 @@ index 24d9bc84..7cf9c01a 100644
  ########### create config.h ###############
  
  #include(ConfigureChecks.cmake)
-@@ -784,6 +789,7 @@ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  "
+@@ -780,6 +785,7 @@ message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  "
  message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
  else()
  message("        SELinux support:          ${HAVE_SELINUX}                     ")
@@ -34,10 +34,10 @@ index 24d9bc84..7cf9c01a 100644
  message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
  message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
 diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
-index cda84851..e1da99f4 100644
+index d0656349c3008e51e9bedeefa85d9340f538522e..e82acc11e824ff709349a460f89c8dee614ee0da 100644
 --- a/dbus/CMakeLists.txt
 +++ b/dbus/CMakeLists.txt
-@@ -299,6 +299,9 @@ else(WIN32)
+@@ -300,6 +300,9 @@ else(WIN32)
      if(HAVE_SELINUX)
          target_link_libraries(dbus-1 selinux)
      endif()
@@ -46,4 +46,4 @@ index cda84851..e1da99f4 100644
 +    endif()
  endif()
  
- target_include_directories(dbus-1 INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dbus-1.0>;$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/dbus-1.0/include>)
+ # target definitions passed to the clients

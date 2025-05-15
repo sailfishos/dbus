@@ -13,10 +13,10 @@ This reverts commit 6072f8b24153d844a3033108a17bcd0c1a967816.
  1 file changed, 33 insertions(+), 42 deletions(-)
 
 diff --git a/bus/selinux.c b/bus/selinux.c
-index 587ed693..763fdfd3 100644
+index 1dd6f73dfc9883b9d081f51cb9d7c42a9cf0a4d6..6585ff88aa4ae9224c8bf29af836eaa974e196a5 100644
 --- a/bus/selinux.c
 +++ b/bus/selinux.c
-@@ -285,6 +285,24 @@ bus_selinux_pre_init (void)
+@@ -287,6 +287,24 @@ bus_selinux_pre_init (void)
  #endif
  }
  
@@ -41,7 +41,7 @@ index 587ed693..763fdfd3 100644
  /**
   * Establish dynamic object class and permission mapping and
   * initialize the user space access vector cache (AVC) for D-Bus and set up
-@@ -306,6 +324,13 @@ bus_selinux_full_init (BusContext *context, DBusError *error)
+@@ -308,6 +326,13 @@ bus_selinux_full_init (BusContext *context, DBusError *error)
  
    _dbus_verbose ("SELinux is enabled in this kernel.\n");
  
@@ -55,7 +55,7 @@ index 587ed693..763fdfd3 100644
    avc_entry_ref_init (&aeref);
    if (avc_open (NULL, 0) < 0)
      {
-@@ -420,53 +445,19 @@ error:
+@@ -422,53 +447,19 @@ error:
  static dbus_bool_t
  bus_selinux_check (BusSELinuxID        *sender_sid,
                     BusSELinuxID        *override_sid,
@@ -113,7 +113,7 @@ index 587ed693..763fdfd3 100644
      {
      switch (errno)
        {
-@@ -533,8 +524,8 @@ bus_selinux_allows_acquire_service (DBusConnection     *connection,
+@@ -532,8 +523,8 @@ bus_selinux_allows_acquire_service (DBusConnection     *connection,
    
    ret = bus_selinux_check (connection_sid,
  			   service_sid,
@@ -124,7 +124,7 @@ index 587ed693..763fdfd3 100644
  			   &auxdata);
  
    _dbus_string_free (&auxdata);
-@@ -662,8 +653,8 @@ bus_selinux_allows_send (DBusConnection     *sender,
+@@ -655,8 +646,8 @@ bus_selinux_allows_send (DBusConnection     *sender,
  
    ret = bus_selinux_check (sender_sid, 
  			   recipient_sid,

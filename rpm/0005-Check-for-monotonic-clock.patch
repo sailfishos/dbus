@@ -9,10 +9,10 @@ Subject: [PATCH] Check for monotonic clock.
  1 file changed, 8 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7cf9c01a..7d724075 100644
+index abdfa78e705447d6510f7bfaa9e7df719cc455a5..bbca506f4e32b5cdf73e2b92d9a7ec504cb2f574 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -597,6 +597,14 @@ if(UNIX)
+@@ -581,6 +581,14 @@ if(UNIX)
      endif()
  endif()
  

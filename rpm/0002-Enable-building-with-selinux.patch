@@ -10,10 +10,10 @@ Signed-off-by: Matti Kosola <matti.kosola@jolla.com>
  2 files changed, 10 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc405d2c..24d9bc84 100644
+index 3d96059e0e845fde9fe3ab3aa1384e2852015b8b..61f4715d949ba38cd2f82adcd44ad08897abbb3f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -636,6 +636,12 @@ endif()
+@@ -630,6 +630,12 @@ endif()
  
  set(DBUS_DAEMON_NAME "dbus-daemon" CACHE STRING "The name of the dbus daemon executable")
  
@@ -26,7 +26,7 @@ index fc405d2c..24d9bc84 100644
  ########### create config.h ###############
  
  #include(ConfigureChecks.cmake)
-@@ -777,6 +783,7 @@ if(WIN32)
+@@ -773,6 +779,7 @@ if(WIN32)
  message("        Session bus listens on:   ${DBUS_SESSION_BUS_LISTEN_ADDRESS}  ")
  message("        Session clients connect to: ${DBUS_SESSION_BUS_CONNECT_ADDRESS} ")
  else()
@@ -35,10 +35,10 @@ index fc405d2c..24d9bc84 100644
  message("        System bus socket:        ${DBUS_SYSTEM_SOCKET}               ")
  message("        System bus PID file:      ${DBUS_SYSTEM_PID_FILE}             ")
 diff --git a/dbus/CMakeLists.txt b/dbus/CMakeLists.txt
-index 9e3f0a14..cda84851 100644
+index 04f9ca225991284cbdc37498894bea608fd15880..d0656349c3008e51e9bedeefa85d9340f538522e 100644
 --- a/dbus/CMakeLists.txt
 +++ b/dbus/CMakeLists.txt
-@@ -296,6 +296,9 @@ else(WIN32)
+@@ -297,6 +297,9 @@ else(WIN32)
          target_link_libraries(dbus-1 ${Backtrace_LIBRARY})
          target_include_directories(dbus-1 PRIVATE ${Backtrace_INCLUDE_DIR})
      endif()
@@ -47,4 +47,4 @@ index 9e3f0a14..cda84851 100644
 +    endif()
  endif()
  
- target_include_directories(dbus-1 INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dbus-1.0>;$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/dbus-1.0/include>)
+ # target definitions passed to the clients
